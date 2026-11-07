@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#090c18" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Pocket Arcade" />
+<meta name="description" content="Twelve games, one pocket-sized arcade. Play on your iPhone, online or offline." />
+<link rel="icon" href="./icons/icon-192.png" type="image/png" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+<title>Pocket Arcade — Your games, one tap away</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<main class="app">
+<section id="homeScreen">
+ <header class="brandbar"><div class="brand"><div class="logo">✦</div><span>Pocket Arcade</span></div><div class="mini-badge">✦ 12 GAMES</div></header>
+ <section class="hero"><div class="eyebrow">✧ YOUR POCKET, YOUR PLAYGROUND</div><h1>Play more.<br/><span>Anywhere.</span></h1><p>Pick a game, tap play, and enjoy your own arcade. No accounts, no downloads, just fun.</p></section>
+ <section class="feature-card"><div class="feature-copy"><div class="eyebrow">★ FEATURED GAME</div><h2>Highway Racer</h2><p>How far can you drive?</p><button class="pill-play" id="featurePlay">▶ Play now</button></div><div class="feature-icon">🏎️</div></section>
+ <div class="section-title"><h2>Explore games</h2><small id="resultsCount">12 games</small></div>
+ <label class="search-box"><span>⌕</span><input id="search" type="search" autocomplete="off" placeholder="Find your next favorite game..." aria-label="Search games" /></label>
+ <div id="chips" class="chips" aria-label="Filter games"></div>
+ <div id="gamesList" class="games-list"></div>
+ <div class="footer-note">Made for touch screens · Your scores stay on this device<br/>Works offline after installed from a secure website</div>
+</section>
+<section id="gameScreen" class="hidden">
+ <header class="game-header"><button id="backBtn" class="back-btn" aria-label="Back to Games">‹ Games</button><div class="game-headline"><h1 id="gameTitle"></h1><small id="gameCategory"></small></div><button id="restartBtn" class="icon-btn" title="Restart game" aria-label="Restart game">↻</button></header>
+ <div class="instructions" id="instructions"></div>
+ <div id="gameHud" class="game-hud"></div>
+ <div id="gameStage" class="game-area"></div>
+ <div id="gameMessage" class="game-message" aria-live="polite"></div>
+ <div id="gameActions" class="game-actions"></div>
+ <p class="game-footer">Tap the back arrow to choose another game. Your best scores are saved automatically on this device.</p>
+</section>
+<section id="statsScreen" class="hidden"><header class="brandbar"><div class="brand"><div class="logo">✦</div>My arcade</div></header><div class="hero"><div class="eyebrow">YOUR PERSONAL BESTS</div><h1>Your <span>records.</span></h1><p>Saved on this iPhone. No account or internet connection required after installation.</p></div><div id="statsList" class="trophy-list"></div><div class="section-title"><h2>Local data</h2></div><p class="storage-note">Your high scores, favorites, and city stay in this browser. Clearing Safari's website data will erase them.</p></section>
+</main><aside id="updateNotice" class="update-notice hidden" aria-live="polite"><span>Update ready. Save and reload when you’re ready.</span><button id="applyUpdate" class="btn primary">Update now</button></aside>
+<nav class="bottom-nav" id="bottomNav" aria-label="Main navigation"><button class="nav-btn active" data-screen="home"><span class="nav-icon">⌂</span>Explore</button><button class="nav-btn" data-screen="favorites"><span class="nav-icon">♡</span>Favorites</button><button class="nav-btn" data-screen="stats"><span class="nav-icon">♜</span>My scores</button></nav>
+<script src="./app.js" defer></script>
+</body>
+</html>
