@@ -1,43 +1,59 @@
-# Pocket Arcade
+# Pocket Arcade 2.0
 
-The original 12 self-contained mini-games, preserved from the supplied iPhone Website ZIP: 2048, Neon Snake, Highway Racer, Adventure Platformer, Tower Defense, 8-Ball Pool Practice, Sudoku, Chess vs Computer, Endless Runner, City Tycoon, Air Hockey, Parking Challenge.
+Twelve original touch-first games in an edge-to-edge iPhone web app. No runtime packages, third-party scripts, advertising, trackers, accounts or external game assets.
 
-Dark mobile library with inline SVG game thumbnails, search, categories, favorites and local records. No runtime dependencies, external scripts, analytics, ads or accounts. Pool is solo practice, chess has a basic AI (no repetition/fifty-move draw adjudication), Sudoku uses one puzzle, and parking is top-down.
+Website: https://iismyii.github.io/pocket-arcade/
+Repository: https://github.com/IISMYII/pocket-arcade
 
-## Preview and test
+## Play and install
 
-Run `python tests/serve.py` and open http://127.0.0.1:8001/pocket-arcade/ . Automated verification requires Node, Playwright and Chromium; run `ARCADE_URL=http://127.0.0.1:8001/pocket-arcade/ node tests/mobile.cjs`. The test expects Chromium at `/usr/bin/chromium`. It temporarily changes the service-worker version and restores it in a finally block; use only with a local preview, not a deployed URL.
+Safari → open the website → Share → Add to Home Screen → Add. Keep the initial launch online until the offline bundle is cached. Standalone uses the available screen and safe areas. Safari retains its own browser controls; no Fullscreen permission request is used.
 
-## Deployment
+Select a game to start or restore its previous session. Pause opens instructions, sound, reduced motion, supported haptics, favorites, resume, restart and exit. Exit saves progress; select the game again to return. Restart resets only that game session. City construction is durable and intentionally survives restart. Sound defaults off and is initialized only in a player gesture. Browser vibration is optional and unavailable in iPhone Safari.
 
-Deployment has not been completed: the environment's GH_TOKEN is invalid. The GitHub connector identifies IISMYII but cannot create repositories or configure Pages. No live URL is claimed.
+## The twelve games
 
-Authenticate GitHub CLI securely in the execution environment using `gh auth login --web --git-protocol https`. If an invalid GH_TOKEN environment variable takes precedence, remove that stale binding in environment settings and authenticate again. Never put credentials in this source tree or chat.
+| Game | V2 design and interaction |
+| --- | --- |
+| 2048 Puzzle | Porcelain-green tiles, animated sliding/spawn/merges, full board snapshots, swipe and accessible direction controls. |
+| Neon Snake | Luminous ribbon, smooth cell interpolation, collectible particles, responsive rectangular arena with square cells, rotation-safe state. |
+| Highway Racer | Wet neon expressway, detailed reflective vehicles, city scenery, smooth lane changes, balanced traffic and coin sparks. |
+| Adventure Platformer | Parallax moonlit landscape, animated ranger, textured terrain, star effects, checkpoints, buffered/coyote jumping and two-finger controls. |
+| Tower Defense | Stone causeway, crystal turrets, animated raiders, projectiles/range highlights, live wave persistence. |
+| Pool Practice | Lit wood/felt table, shaded numbered balls, aiming/power guide, improved collision substeps and pocket feedback. |
+| Sudoku | Ivory puzzle surface, row/column/box/matching highlights, readable keypad, hint/check actions and resumable board. |
+| Chess vs Computer | Original SVG ivory/slate pieces, last/legal/capture markers, turn feedback, pause-safe computer response and complete match snapshots. |
+| Endless Runner | Sunset city, coherent perspective, animated runner, interpolated lanes, cargo/barriers, spinning coins and fairer waves. |
+| City Tycoon | Original miniature building illustrations, skyline, roads, construction effects, level badges, economy inspector and offline earnings. |
+| Air Hockey | Luminous arena, shaded paddles, puck trails, impact rings, goal/serve feedback and direct dragging. |
+| Parking Challenge | Detailed rooftop lot/car, shaded objects, glowing bays, steering/brake effects and multitouch driving. It remains the original top-down game, not a new WebGL 3D game. |
 
-Once authenticated, check whether `IISMYII/pocket-arcade` exists. If it exists, inspect it before pushing; do not replace an unrelated project. For a new repository, from this dedicated project directory:
+Pool is solo six-ball practice. Sudoku has one original fixed puzzle. Chess is a modest local opponent with promotion/castling/en passant, but does not adjudicate repetition or fifty-move draws. No claim of exhaustive gameplay or device perfection.
+
+## Architecture
+
+`app.js` owns navigation, bounded/validated storage, audio, fullscreen layout lifecycle, input cleanup, shared HUD and PWA update flow. `engines/*.js` retain the twelve original game identities and rules, with rebuilt renderers and validated V2 snapshots. `art/` contains original SVG covers/pieces/buildings; provenance is in `art/LICENSE.md`. All assets are local and licensed for this project.
+
+`#gameScreen` is a separate fixed `100dvh` scene, outside the library's maximum-width layout. The library/navigation are hidden during play and page scroll, selection, pinch gestures and touch callouts are suppressed on the game scene. HUD and controls honor safe-area padding. Landscape places HUD/actions on a side rail. Canvas backing buffers follow actual scene dimensions with DPR capped at 2 and adaptive resolution reduction under sustained slow frames. Scene renderers retain object proportions; puzzle boards remain square. DOM puzzles use the remaining scene space rather than a homepage card. Pausing/backgrounding stops the animation loop and releases held input; menus overlay gameplay without changing its size.
+
+Original `pa_best_*`, `pa_favorites`, `pa_city` and `pa_chess_wins` remain. Storage migration adds `pa_storage_version=2` only. New `pa_v2_session_*` envelopes include `version:2`, with engine-specific validation. Unknown preference fields survive updates. A memory fallback preserves library navigation when storage rejects writes (it cannot survive closing/reloading the page). Snapshots save on actions where applicable, periodically, on pause, exit, pagehide and update acceptance. Recent games and optional first-record achievements are derived locally; no remote synchronization.
+
+## Preview and verify
 
 ```
-gh repo create IISMYII/pocket-arcade --public --source=. --remote=origin
-git push -u origin main
-gh api --method POST repos/IISMYII/pocket-arcade/pages -f build_type=workflow
-gh api --method PUT repos/IISMYII/pocket-arcade/pages -F https_enforced=true
-gh workflow run pages.yml
+python tests/serve.py
+# http://127.0.0.1:8020/pocket-arcade/
+node tests/v2-qa.cjs
+node tests/storage-qa.cjs
+node tests/performance.cjs
 ```
 
-If Pages is already configured use its existing settings or update build_type to workflow. The workflow uses GitHub's Pages artifact and OIDC deployment actions, with read-only source permission and job-scoped Pages write permission. Only application resources are uploaded. Verify the Actions run succeeds and https://iismyii.github.io/pocket-arcade/ returns the actual app before calling deployment complete. The workflow can also be selected in Settings → Pages → GitHub Actions.
+Browser checks require locally installed Playwright and Chromium (`/usr/bin/chromium`, overridable by CHROMIUM for the main suite). The main suite's update integration temporarily changes local sw.js and restores it. Do not point it at production to simulate a deployment. See TESTING.md and RELEASE.md for evidence and limitations.
 
-## Offline and updates
+## Offline, releases and security
 
-The manifest names the app Pocket Arcade / Arcade, with standalone portrait display and 192/512 PNG icons plus a separate 180px Apple touch icon. Load online once and allow all resources to cache before relying on offline access. All game resources are bundled. The service worker only handles an explicit same-origin resource allowlist, never arbitrary requests or external code.
+Run `python tests/build-cache.py` after changing the resource set, and bump CACHE in its template/sw.js for each release. An entire version is precached atomically; a failed resource install leaves the earlier worker available. The app offers **Save & update** for a waiting worker; accepting saves active progress before activation/reload. Updates are checked on launch, reconnect, foregrounding and hourly while open. If no old app windows remain the waiting worker can activate normally. Old caches are retained for old tabs; player data is never cleared by the worker. iOS controls eviction and background execution: reopen online for updates; do not rely on indefinite offline storage.
 
-Bump CACHE in sw.js on EVERY release that changes bundled resources. Installation precaches the entire bundle and fails if a required resource fails. The waiting worker offers an Update now notification; accepting saves the city and reloads. Without acceptance the worker activates after old windows close. Updates are checked on launch, returning to the foreground, reconnecting, and hourly while open. Version caches keep a coherent bundle even on network failure. Old caches are retained for open clients; browsers may reclaim them. Scores, favorites and city use the original pa_* localStorage keys; updating never clears them. Only records and city persist, not in-progress boards or matches. Invalid stored values are rejected before use; scores are rendered as text.
+CSP permits only local scripts/styles/workers/connections and local/data images. No eval, imported runtime code, secret values, analytics or arbitrary external request caching. CSP uses a meta tag because Pages does not supply configurable response headers here (meta cannot enforce frame-ancestors). WebAudio uses local synthesis, not downloaded media. Keep HTTPS enforced in GitHub Pages.
 
-## iPhone installation and limits
-
-Safari → open the published website → Share → Add to Home Screen → Add. Open Pocket Arcade from its new icon. Keep the first launch online until the offline files are ready.
-
-iOS controls storage retention and can evict offline files under storage pressure or inactivity. Clearing website data or removing the app can remove local progress. Safari and a Home Screen app may have separate storage; progress does not sync between devices or installations. iOS does not guarantee background updates: reopen the app while online and accept Update now if shown. No real iPhone Safari device test has been performed.
-
-## Security
-
-CSP restricts scripts/styles/workers/connections to this origin, permits data images for bundled SVG thumbnails, and blocks objects, forms and base URL changes. Script and CSS were extracted into local files so inline script permission is unnecessary. No eval, downloaded-code updater, secrets, trackers or third-party runtime resources. GitHub Pages does not support custom response headers here, so CSP is supplied by HTML meta (which cannot enforce frame-ancestors). Keep GitHub HTTPS enforcement enabled.
+Development uses `release/pocket-arcade-v2` based on the existing repository history. The repository originally has root-based Pages publishing and no checked-in Actions workflow; V2 retains that hosting configuration. Source updates must go through authenticated GitHub operations and ordinary merges, never force-push. Only merge a tested bundle into main. Verify both the public HTML `application-version=2.0.0` and current sw.js after publishing, not just repository contents.
