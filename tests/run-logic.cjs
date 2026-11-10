@@ -1,0 +1,3 @@
+const {spawnSync}=require('node:child_process');const fs=require('node:fs'),path=require('node:path');
+const files=['hockey-legacy-regression.cjs','hockey-physics.cjs','tower-rules.cjs','tower-balance.cjs','arcade-rules.cjs','platform.cjs','pool-physics.cjs','sudoku.cjs','chess-rules.cjs','runner.cjs','city-rules.cjs','parking-rules.cjs'];
+let failures=0;for(const file of files){const run=spawnSync(process.execPath,[path.join(__dirname,file)],{encoding:'utf8',timeout:120000});process.stdout.write(run.stdout||'');process.stderr.write(run.stderr||'');if(run.status!==0){failures++;console.error('FAILED',file,run.error||run.status)}}console.log(`Logic suites: ${files.length-failures}/${files.length} passed.`);process.exitCode=failures?1:0;

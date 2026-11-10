@@ -1,59 +1,61 @@
-# Pocket Arcade 2.0
+# Pocket Arcade 3.0
 
-Twelve original touch-first games in an edge-to-edge iPhone web app. No runtime packages, third-party scripts, advertising, trackers, accounts or external game assets.
+Twelve local-first touch games with fullscreen preparation menus, meaningful rules/settings, resumable sessions and offline play.
 
-Website: https://iismyii.github.io/pocket-arcade/
+Live: https://iismyii.github.io/pocket-arcade/
 Repository: https://github.com/IISMYII/pocket-arcade
 
 ## Play and install
 
-Safari → open the website → Share → Add to Home Screen → Add. Keep the initial launch online until the offline bundle is cached. Standalone uses the available screen and safe areas. Safari retains its own browser controls; no Fullscreen permission request is used.
+Safari → open the website → Share → Add to Home Screen → Add. Keep the first launch online until the bundle is cached. Safari controls its own browser chrome; the installed app uses the standalone safe-area layout without a native Fullscreen permission prompt.
 
-Select a game to start or restore its previous session. Pause opens instructions, sound, reduced motion, supported haptics, favorites, resume, restart and exit. Exit saves progress; select the game again to return. Restart resets only that game session. City construction is durable and intentionally survives restart. Sound defaults off and is initialized only in a player gesture. Browser vibration is optional and unavailable in iPhone Safari.
+Select a game to prepare it. Choose the actual difficulty/mode/level, read its guide and records, then **Start new game** or **Continue** a validated session for those rules. Starting replaces only that configuration after successful initialization. Other configurations/games and old records remain. City is durable: **Enter city** and restart retain its buildings/economy. Pause freezes simulation; game settings return to preparation without deleting the saved session. Sound is synthesized locally and unlocks only on a player gesture; haptics appear only where supported.
 
-## The twelve games
+## V3 gameplay
 
-| Game | V2 design and interaction |
+| Game | Real rules and content |
 | --- | --- |
-| 2048 Puzzle | Porcelain-green tiles, animated sliding/spawn/merges, full board snapshots, swipe and accessible direction controls. |
-| Neon Snake | Luminous ribbon, smooth cell interpolation, collectible particles, responsive rectangular arena with square cells, rotation-safe state. |
-| Highway Racer | Wet neon expressway, detailed reflective vehicles, city scenery, smooth lane changes, balanced traffic and coin sparks. |
-| Adventure Platformer | Parallax moonlit landscape, animated ranger, textured terrain, star effects, checkpoints, buffered/coyote jumping and two-finger controls. |
-| Tower Defense | Stone causeway, crystal turrets, animated raiders, projectiles/range highlights, live wave persistence. |
-| Pool Practice | Lit wood/felt table, shaded numbered balls, aiming/power guide, improved collision substeps and pocket feedback. |
-| Sudoku | Ivory puzzle surface, row/column/box/matching highlights, readable keypad, hint/check actions and resumable board. |
-| Chess vs Computer | Original SVG ivory/slate pieces, last/legal/capture markers, turn feedback, pause-safe computer response and complete match snapshots. |
-| Endless Runner | Sunset city, coherent perspective, animated runner, interpolated lanes, cargo/barriers, spinning coins and fairer waves. |
-| City Tycoon | Original miniature building illustrations, skyline, roads, construction effects, level badges, economy inspector and offline earnings. |
-| Air Hockey | Luminous arena, shaded paddles, puck trails, impact rings, goal/serve feedback and direct dragging. |
-| Parking Challenge | Detailed rooftop lot/car, shaded objects, glowing bays, steering/brake effects and multitouch driving. It remains the original top-down game, not a new WebGL 3D game. |
+| Air Hockey | 240Hz relative-velocity physics; repaired rail/paddle trap; bounded paddles; three constrained AI profiles; targets3/5/7/10; three puck paces; serves/countdown/stats and logged neutral no-score recovery. |
+| Tower Defense | Six towers and six enemy classes; three12-wave campaigns; milestone bosses; bounded1000-wave Marathon; upgrades/selling; integer performance points separate from gold; validated exactly-once reward ledgers. |
+| 2048 | 4×4/5×5; single-step Undo; correct one-merge-per-tile reducers;90-move2048 challenge; continuation beyond target. |
+| Snake | Three real speed profiles, levels, open/pillars/wrap arenas, reachable food spawning and one queued turn per cell. |
+| Racer | Three stages, traffic difficulties, three distinct handling/collision profiles including Heavy's one-hit shield; fair timed escape rows and distance/coin performance points. |
+| Platformer | Three different expeditions, movement/gravity/checkpoints/lives/hazards, reachable collectibles, difficulty assistance and next-level progression. |
+| Pool Practice | Solo six-ball practice,12-shot Precision and90-second Sprint; fixed-step collision/friction/pockets/scratches, aim guide and power multiplier, statistics/points. Not competitive8-ball. |
+| Sudoku |90 solver-verified unique puzzles, three complexity profiles, deterministic UTC daily boards, notes, hints, mistakes, active timer and once-per-puzzle completion accounting. |
+| Chess | Audited chess.js1.4.0 offline rules, tested special moves/draws, three bounded minimax levels, local two-player mode, promotion choice, history/undo and replayable validated saves. |
+| Runner | Three missions/environments or endless play; physical jump, constrained lanes, reaction-safe rows, shields, objectives and score. |
+| City | Six building roles and five upgrade levels, jobs/services/occupancy, two economies, goals/achievements, unified city rating, bounded offline income and clock safeguards. |
+| Parking | Eight distinct top-down layouts; three real vehicle profiles; bicycle dynamics, oriented-rectangle obstacle collision, strict full-car parking, contacts/time/stars/points and next-layout flow. |
 
-Pool is solo six-ball practice. Sudoku has one original fixed puzzle. Chess is a modest local opponent with promotion/castling/en passant, but does not adjudicate repetition or fifty-move draws. No claim of exhaustive gameplay or device perfection.
+Detailed formulas, tests and scope limits are in docs/. Begin with docs/V3-AUDIT-PLAN.md and docs/V3-RELEASE-REPORT.md.
 
-## Architecture
+## Architecture and storage
 
-`app.js` owns navigation, bounded/validated storage, audio, fullscreen layout lifecycle, input cleanup, shared HUD and PWA update flow. `engines/*.js` retain the twelve original game identities and rules, with rebuilt renderers and validated V2 snapshots. `art/` contains original SVG covers/pieces/buildings; provenance is in `art/LICENSE.md`. All assets are local and licensed for this project.
+`catalog.js` describes validated real options, V3 mode records and progression. `app.js` owns preparation/lifecycle,120Hz active simulation scheduling, one render loop, pause/input cleanup, audio, safe session/error handling and PWA updates. Each engine adapts a separate testable logic model; games do not share inappropriate physics. `engines/*-common.js` retain original graphics helpers. Runtime assets remain local. The sole vendored rules dependency is chess.js1.4.0 with its BSD-2-Clause license, no transitive runtime dependencies or CDN.
 
-`#gameScreen` is a separate fixed `100dvh` scene, outside the library's maximum-width layout. The library/navigation are hidden during play and page scroll, selection, pinch gestures and touch callouts are suppressed on the game scene. HUD and controls honor safe-area padding. Landscape places HUD/actions on a side rail. Canvas backing buffers follow actual scene dimensions with DPR capped at 2 and adaptive resolution reduction under sustained slow frames. Scene renderers retain object proportions; puzzle boards remain square. DOM puzzles use the remaining scene space rather than a homepage card. Pausing/backgrounding stops the animation loop and releases held input; menus overlay gameplay without changing its size.
+Legacy `pa_best_*`, `pa_favorites`, `pa_chess_wins`, `pa_city` and V2 session envelopes remain. V3 uses validated configuration-keyed session envelopes, separate point records, progression and metadata. Legacy incompatible active routes/waves/parking layouts migrate safely as documented rather than claiming impossible coordinate compatibility. City keeps a separate richer durable save and preserves the source V2 city. Failed initialization/update cannot overwrite the previous safe snapshot. Denied writes use memory while the page remains open; memory fallback does not survive reload. No account/cloud sync or server anti-cheat exists.
 
-Original `pa_best_*`, `pa_favorites`, `pa_city` and `pa_chess_wins` remain. Storage migration adds `pa_storage_version=2` only. New `pa_v2_session_*` envelopes include `version:2`, with engine-specific validation. Unknown preference fields survive updates. A memory fallback preserves library navigation when storage rejects writes (it cannot survive closing/reloading the page). Snapshots save on actions where applicable, periodically, on pause, exit, pagehide and update acceptance. Recent games and optional first-record achievements are derived locally; no remote synchronization.
-
-## Preview and verify
+## Preview and tests
 
 ```
 python tests/serve.py
-# http://127.0.0.1:8020/pocket-arcade/
-node tests/v2-qa.cjs
+# http://127.0.0.1:8030/pocket-arcade/
+node tests/run-logic.cjs
+node tests/resources.cjs
+node tests/v3-browser.cjs
 node tests/storage-qa.cjs
 node tests/performance.cjs
 ```
 
-Browser checks require locally installed Playwright and Chromium (`/usr/bin/chromium`, overridable by CHROMIUM for the main suite). The main suite's update integration temporarily changes local sw.js and restores it. Do not point it at production to simulate a deployment. See TESTING.md and RELEASE.md for evidence and limitations.
+Node's built-in modules suffice for pure rules tests. Browser suites require Playwright and Chromium; the execution environment used Playwright1.62.1 and `/usr/bin/chromium`. Individual `*-browser.cjs` suites exercise each engine. `tests/visual.cjs --update-baseline` explicitly captures25 deterministic visual fixtures in evidence/visual; `node tests/visual.cjs` compares them. Baselines/evidence are included in the release ZIP rather than production Git source. The local update test temporarily changes sw.js and restores it; run it against local preview only. CI verifies deterministic rules and runtime/CSP/offline dependency integrity on PRs.
 
-## Offline, releases and security
+No physical iPhone Safari, installed iOS PWA, battery or thermal measurement has been performed. Chromium emulation is not a substitute. See TESTING.md for actual evidence and limits.
 
-Run `python tests/build-cache.py` after changing the resource set, and bump CACHE in its template/sw.js for each release. An entire version is precached atomically; a failed resource install leaves the earlier worker available. The app offers **Save & update** for a waiting worker; accepting saves active progress before activation/reload. Updates are checked on launch, reconnect, foregrounding and hourly while open. If no old app windows remain the waiting worker can activate normally. Old caches are retained for old tabs; player data is never cleared by the worker. iOS controls eviction and background execution: reopen online for updates; do not rely on indefinite offline storage.
+## Offline and release security
 
-CSP permits only local scripts/styles/workers/connections and local/data images. No eval, imported runtime code, secret values, analytics or arbitrary external request caching. CSP uses a meta tag because Pages does not supply configurable response headers here (meta cannot enforce frame-ancestors). WebAudio uses local synthesis, not downloaded media. Keep HTTPS enforced in GitHub Pages.
+`python tests/build-cache.py` builds an explicit intended-resource list from runtime dependencies and bundled art/icons. Bump the cache release version on every deployed code/resource change. Installation precaches the whole version; failures leave the earlier worker available. **Save & update** saves active progress before controlled worker activation/reload. Checks run at launch, foreground, reconnect and hourly. Old caches are retained for old clients; the worker never clears player storage or caches arbitrary external requests.
 
-Development uses `release/pocket-arcade-v2` based on the existing repository history. The repository originally has root-based Pages publishing and no checked-in Actions workflow; V2 retains that hosting configuration. Source updates must go through authenticated GitHub operations and ordinary merges, never force-push. Only merge a tested bundle into main. Verify both the public HTML `application-version=2.0.0` and current sw.js after publishing, not just repository contents.
+CSP restricts scripts/styles/workers/connections to this origin, blocks eval/inline script permission, and permits local/data images. No credentials, trackers, ads, external game assets or downloaded-code update mechanism. CSP is an HTML meta policy (Pages cannot supply our custom response headers; meta cannot enforce frame-ancestors). Keep HTTPS enforced in Pages. iOS may evict offline/storage data and does not guarantee background updates; reopen online for new releases.
+
+Develop on release/pocket-arcade-v3, preserve original history, and publish through the existing root-based Pages configuration after tested PR merge. `.github/workflows/verify.yml` checks rules/resources; it does not replace hosting configuration. Never force-push. Confirm public application-version3.0.0, actual resources/gameplay and offline behavior before claiming publication.

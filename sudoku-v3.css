@@ -1,0 +1,8 @@
+/* The original Ivory board remains; these additions keep pencil marks readable. */
+.sudoku-notes{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);position:absolute;inset:3px;pointer-events:none;line-height:1;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;font-size:clamp(7px,1.95vw,12px);font-weight:550;color:#456878}
+.sudoku-notes span{display:grid;place-items:center}
+.sudoku-board button.selected .sudoku-notes{color:#edf7ec}
+.sudoku-session-summary{color:#c7bfa9;font-size:10px;margin:0;text-align:center;line-height:1.35}
+body[data-game="sudoku"] #gameActions .selected{background:#487f83;border-color:#88bcb0;color:#fff5d8}
+@media(orientation:landscape){.sudoku-notes{inset:2px;font-size:clamp(6px,1.8dvh,9px)}.sudoku-session-summary{font-size:9px}}
+@media(max-height:700px) and (orientation:portrait){.sudoku-notes{inset:1px;font-size:8px}}

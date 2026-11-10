@@ -1,15 +1,13 @@
-# V2 verification
+# Pocket Arcade 3.0 verification
 
-All browser results are Linux Chromium with mobile touch emulation. No physical iPhone Safari, Dynamic Island device, installed iOS PWA or iPhone battery/thermal benchmark has been tested.
+Run a localhost preview with `python tests/serve.py` at http://127.0.0.1:8030/pocket-arcade/ .
 
-- Fullscreen scene, no library/nav/card wrapper, canvas DPR, no horizontal overflow, pause/resume/restart/exit: all 12 games at 320×568, 375×812, 390×844, 430×932 and 844×390.
-- Actual CDP touch gestures: swipes, pool shot, hockey drag, held parking acceleration; individual engine integration tests also cover platform two-finger movement+jump, runner lanes, tower placement/waves, 2048 movement/merge, Sudoku input/hint completion, chess legal move+AI, and city construction.
-- Existing records/favorites retained, city and V2 session reload/return, score and preference persistence, paused chess AI, terminal replay menus.
-- Every engine opens after offline reload. Real service-worker waiting/update notification, explicit acceptance, offline relaunch and preserved player data.
-- Malformed scores/favorites/city/snapshots reject safely; no browser JavaScript or CSP errors in the main suite.
-- Independent storage regression: denied localStorage writes/removal fall back to memory, targeted restart preserves records, unknown preferences/unrelated storage survive, sound state/ARIA sync, Escape pause and interrupted swipe recovery.
-- Before screenshots come from untouched remote commit 400e7aa. After screenshots capture the redesigned actual playable engines. The local delivery evidence gallery links both for home and every game.
+- `node tests/run-logic.cjs`:12 deterministic suites across all12 games, including preserved failing-V2 Hockey fixture, repaired physics, exact Tower accounting, full-level controllers, unique Sudoku solutions, published chess perft/rules and economy/migration checks.
+- `node tests/resources.cjs`: runtime script syntax, CSP, local dependencies and explicit offline list.
+- `node tests/run-browser.cjs`:10 suites exercising actual touch gameplay, preparation/settings, pause/Continue/restart, terminal/progression flows, records, corrupted/denied storage, error recovery, all-game offline launch and accepted service-worker update.
+- `node tests/visual.cjs --update-baseline`: explicit fixture capture. `node tests/visual.cjs`: compare25 deterministic fixtures supplied in release evidence. An intentional visual change requires explicit baseline renewal, not silent acceptance.
+- `node tests/performance.cjs`: short actual-render/rAF timing sample. Shared cloud Chromium is not iPhone hardware.
 
-Performance measurements are in evidence/performance.json in the delivery ZIP. They time actual render calls and rAF intervals in the shared cloud environment, with 390×844/DPR3 emulation and render DPR capped at2. Static pool/hockey/parking backgrounds are cached; sustained slow frames reduce canvas resolution. These measurements are not a guarantee of60FPS on an iPhone. No exhaustive solution run for every level, all chess edge rules, long-term storage eviction or battery use has been performed.
+The full app matrix uses320×568,375×812,390×844,430×932 and844×390 touch viewports. Rule tests include actual complete-level/match simulations and save/reload ledger assertions; browser tests include tactile controls and mechanics. Evidence logs/screenshots are included in the release ZIP; Git excludes generated evidence. Per-game test coverage, formulas, migration compromises and limitations are in docs/V3-RELEASE-REPORT.md and its linked engine documents.
 
-Final isolated performance run: median display interval16.7ms for all8 canvas engines (about60FPS in this environment); median render work0.1–0.8ms, p95 up to2ms,45 sampled renders each. Pool/Hockey static layers removed a measured repeated-drawing bottleneck. Long sessions and iPhone thermal behavior remain unmeasured.
+No actual physical iPhone Safari or installed iOS PWA, device thermal/battery test, unbounded fuzz proof or exhaustive human-play balance test has been performed. Local progress/clock data cannot be made server-authoritative without a server. Existing HTTPS Pages publication and the deployed V3 marker/offline resources must be verified separately after merge.

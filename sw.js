@@ -1,17 +1,41 @@
 'use strict';
-// V2 is an atomic local bundle. A waiting worker activates on player acceptance.
-const CACHE='pocket-arcade-v2.0.0';
+// Atomic V3 bundle. Change this release version on every deployment.
+const CACHE='pocket-arcade-v3.0.0';
 const CORE=[
  "./",
  "./index.html",
+ "./manifest.webmanifest",
+ "./logic/chess-worker.js",
+ "./catalog.js",
  "./app.js",
+ "./vendor/chess-1.4.0.js",
+ "./logic/chess-rules.js",
+ "./logic/city-rules.js",
+ "./logic/hockey-physics.js",
+ "./logic/pool-physics.js",
+ "./logic/tower.js",
+ "./logic/arcade-models.js",
+ "./logic/sudoku.js",
+ "./logic/parking.js",
+ "./logic/platform.js",
+ "./logic/runner.js",
+ "./engines/sports-common.js",
+ "./engines/adventure-common.js",
+ "./engines/arcade.js",
+ "./engines/hockey.js",
+ "./engines/pool.js",
+ "./engines/tower.js",
+ "./engines/platform.js",
+ "./engines/runner.js",
+ "./engines/parking.js",
+ "./engines/sudoku.js",
+ "./engines/chess.js",
+ "./engines/city.js",
  "./styles.css",
  "./boards.css",
- "./manifest.webmanifest",
- "./engines/adventure.js",
- "./engines/arcade.js",
- "./engines/boards.js",
- "./engines/sports.js",
+ "./v3.css",
+ "./boards-v3.css",
+ "./sudoku-v3.css",
  "./art/2048.svg",
  "./art/board-chess-black-b.svg",
  "./art/board-chess-black-k.svg",
@@ -48,7 +72,7 @@ const ALLOWED=new Set(CORE.map(path=>new URL(path,self.registration.scope).href)
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(CORE))));
 self.addEventListener('message',event=>{if(event.data?.type==='ACTIVATE_UPDATE')self.skipWaiting()});
 self.addEventListener('activate',event=>event.waitUntil(self.clients.claim()));
-// Old versions are kept for older open tabs; no localStorage or player data is cleared.
+// Older open clients may need old bundles. Never remove player storage here.
 self.addEventListener('fetch',event=>{
  const url=new URL(event.request.url);
  if(event.request.method!=='GET'||url.origin!==self.location.origin)return;
