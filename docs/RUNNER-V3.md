@@ -1,0 +1,15 @@
+# Endless Runner V3
+
+Three missions: Sunset Avenue400m/9coins; Neon Crossing600m/15coins; Morning Terminal800m/21coins. Distinct palettes/environments, rising base pace and additional double-obstacle rows change the run. Mission completion requires both distance and coin targets; Endless disables the finish threshold. All environment selections correspond to actual engine parameters. Next challenge advances after a mission; saved progression preserves completion stars.
+
+Fixed-step simulation120Hz. Jump uses upward velocity430 and gravity1100, yielding an approximately84-unit apex and0.78s flight, rather than a timer-only visual hop. Barriers require height≥34 at collision; tall cargo must be dodged. Lane input sets an integer target; actual lateral position moves at4.6lanes/s and collision uses actual position within0.42lane, so input cannot instantly teleport through objects. Visuals use the same physical jump height and lane position.
+
+Easy pace0.25→0.36 depth/s and1.9s initial row interval; Medium0.29→0.42/1.7s; Hard0.33→0.47/1.55s. Level adds0.012 depth/s per step; pace increases with elapsed play up to each profile cap. Row intervals bottom out at1.4s. Every row reserves one safe lane, and no row blocks all lanes. Initial visibility exceeds2s at maximum pace. Collision rows are separated by at least1.4s, longer than a full two-lane transition0.435s plus allowance for trailing collectibles. These guarantees are enforced and tested, not assumed from random spawning.
+
+Rows use a saved deterministic LCG. Safe-lane coin trails give a readable line; every sixth row offers a shield. The shield absorbs one collision, is consumed atomically, and grants0.45s collision grace. Objects retain unique IDs, a resolved flag and removal; saved snapshots reject duplicate IDs and invalid geometry. A tall crate still defeats an airborne runner without a shield.
+
+Points = round((2×floor(distance) +25×coins +10×obstacles passed + mission-win bonus(1000+250×level)) × difficulty multiplier0.8/1/1.3). Distance integrates active-time pace, coins and passed obstacles resolve once, and scores freeze after terminal state. Pause/background do not simulate. LegacyV2 distance/coin totals migrate; active obstacle geometry resets because the rules changed. Original records are preserved.
+
+Validation: `node tests/runner.cjs` completes nine missions using only lane input and normal simulation, checks every generated row's safe lane/reaction bound, physical jumping/barrier/cargo behavior, one-use shields, deterministic frame-rate equivalence, score and snapshots. `tests/platform-runner-browser.cjs` verifies actual tap controls, selected level/difficulty, pause, saved Continue and restart in portrait/landscape Chromium without JS errors.
+
+Limits: Missions are compact replayable runs, not a sprawling story. Safety means a physically reachable dodge route exists; late player inputs can still cause collisions. Tests do not promise no bugs on all hardware. Physical iPhone Safari, battery and long-session thermal behavior remain untested.

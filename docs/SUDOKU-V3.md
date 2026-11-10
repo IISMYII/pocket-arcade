@@ -1,0 +1,11 @@
+# Sudoku V3: puzzles, notes, time, records
+
+Ninety distinct curated/generated local puzzles (30 per difficulty) are bundled in logic/sudoku.js. The MRV/backtracking solver counts solutions up to two and validates every collection board. Easy has42–44 clues and solves with singles; Medium has32–34 and requires hidden singles; Hard has25–28 and requires branching under the supplied logical solver. These are algorithmic profiles, not externally certified human ratings. The deterministic daily board uses a UTC-date seed and valid row/column/digit transformations; resuming an earlier day keeps that board's identity.
+
+Notes are sorted unique pencil digits per cell, given cells are immutable, and entering a correct number prunes peer notes. Hints fill one correct cell and count as assistance. Mistakes count changed incorrect entries. The timer advances only with active simulation updates. Finished puzzles validate against the solver's unique solution.
+
+Points = max(100, round(3000×difficulty + max(0,1800−activeSeconds)×difficulty −300×hints −120×mistakes)), where difficulty is1/2/3. Example Easy60seconds with no help=4740; Hard=14220. Stars:3 with no hints/mistakes,2 with at most3 of each, otherwise1. A puzzle's identity is recorded once for lifetime solved count; replay may improve its performance record but cannot increment solved count repeatedly. Collection progress has90 distinct IDs rather than reusing1–30 across difficulties. Daily IDs include date and difficulty.
+
+V2's fixed puzzle resumes as its original legacy board rather than putting its digits into a different puzzle. V2 records remain. V3 options/session envelopes retain separate configurations; new games do not delete other puzzle progress or the completion ledger.
+
+`node tests/sudoku.cjs` proves unique solutions for all90 boards and360 sampled daily boards, valid clues/solutions, difficulty profiles, deterministic UTC identity, note toggling/pruning, corruption rejection and exact scoring penalties/floor. The browser suite enters/restores notes, completes a puzzle through hints, replays it, and verifies no duplicate lifetime reward. No physical iPhone has been tested; the daily puzzle collection is finite transformed content, not a remote daily service.

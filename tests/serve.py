@@ -9,4 +9,4 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_error(404); return
         self.path=self.path[len('/pocket-arcade'):]
         super().do_GET()
-ThreadingHTTPServer(('127.0.0.1',8020),Handler).serve_forever()
+ThreadingHTTPServer(('127.0.0.1',8030),Handler).serve_forever()

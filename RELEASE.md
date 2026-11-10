@@ -1,11 +1,7 @@
-# Pocket Arcade 2.0 release
+# Pocket Arcade 3.0
 
-Based on repository commit 400e7aa2ba7aee04bc4ff1c794d11c6a2cd4e652, developed on release/pocket-arcade-v2.
+This release continues the original project from V2 main657e253 on release/pocket-arcade-v3. See [the complete V3 report](docs/V3-RELEASE-REPORT.md), [audit and plan](docs/V3-AUDIT-PLAN.md), and [testing instructions](TESTING.md).
 
-This release replaces the constrained homepage game panel with a dedicated viewport scene; redesigns every game renderer; adds original game cover/piece/building art; implements a shared pause/settings/replay flow; saves resumable sessions; and retains existing player keys and secure offline updates. It introduces no runtime dependency.
+All12 game identities remain. The changes include the reproduced Hockey corner fix, real Tower points/economy, per-game preparation/settings, expanded content, tested rules/physics, compatible saves and offline PWA updates. No runtime CDN, trackers, credentials or external assets were introduced. The sole vendor rules dependency is local chess.js1.4.0 with its license.
 
-Original repository icon files were uploaded at its root while the manifest referenced icons/. V2 supplies the expected icons/ paths without deleting the old root icons, preserving existing incoming links. No unrelated repository is modified.
-
-Known limits: Safari browser UI remains under iOS control; no native Fullscreen API prompt. Browser haptics are capability-based. No real iPhone testing. Parking remains illustrated top-down gameplay, Pool is practice, Sudoku has one puzzle, Chess has a basic opponent and no repetition/fifty-move adjudication. Local data does not sync, storage may be evicted, and background update delivery is controlled by iOS.
-
-The deployment-ready ZIP contains the exact source structure plus a local evidence folder with paired before/after screenshots, performance data and QA results. Evidence is excluded from Git to keep production source lightweight. Git history remains in the source repository; no history was rewritten.
+The release ZIP adds generated screenshots/test logs/performance/review evidence under evidence/. That directory is deliberately excluded from Git production source. Branch/commit/PR and final publication status are recorded in evidence/release-status.json at delivery. No physical iPhone verification or perfect-gameplay guarantee is claimed.
